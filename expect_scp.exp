@@ -1,0 +1,24 @@
+#!/usr/bin/expect
+############################
+set port 22
+set username root
+set ip 192.168.1.18
+set password rootroot
+set dir /etc
+###########################
+
+spawn scp -P $port /etc/hosts $username@$ip:$dir
+
+# 三种形式
+#expect "password"
+#send "rootroot\n"
+
+#expect "password" {send "rootroot\n"}
+
+expect { 
+	-timeout 300
+	"yes/no"   {exp_send "yes\r";exp_continue}
+	"password" {exp_send "$password\r"}
+	timeout    {puts "Request timeout.";return }
+}
+expect eof
